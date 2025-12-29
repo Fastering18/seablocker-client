@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import cv from "@techstark/opencv-js";
 import { Tensor, InferenceSession } from "onnxruntime-web";
 import Loader from "./components/loader";
-import { detectImage } from "./utils/detect"; // Kita akan update file ini nanti
+import { detectImage } from "./utils/detect"; 
 import "./style/App.css";
 
 const App = () => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState({ text: "Loading OpenCV.js", progress: null });
-  const [image, setImage] = useState(null); // Bisa berupa URL blob atau string URL
-  const [inputMode, setInputMode] = useState("upload"); // 'upload', 'url', 'webcam'
+  const [image, setImage] = useState(null); 
+  const [inputMode, setInputMode] = useState("upload"); 
 
   // Refs
   const imageRef = useRef(null);
@@ -17,7 +17,6 @@ const App = () => {
   const webcamRef = useRef(null);
   const urlInputRef = useRef(null);
 
-  // Configs Model Kamu
   const modelName = "seablocker_model.onnx";
   const modelInputShape = [1, 3, 640, 640];
   const topk = 100;
@@ -26,26 +25,23 @@ const App = () => {
 
   useEffect(() => {
     cv["onRuntimeInitialized"] = async () => {
-      // 1. Load HANYA model utama (Single Session)
       const baseModelURL = `${process.env.PUBLIC_URL}/model`;
 
       try {
         setLoading({ text: `Loading ${modelName}...`, progress: 0 });
 
-        // Load session langsung (Support single file YOLO11)
         const yolov11 = await InferenceSession.create(
           `${baseModelURL}/${modelName}`,
-          { executionProviders: ['wasm'] } // Gunakan 'webgl' jika browser support
+          { executionProviders: ['wasm'] } 
         );
 
-        // Warmup (Pemanasan)
         setLoading({ text: "Warming up model...", progress: null });
         const tensor = new Tensor(
           "float32",
           new Float32Array(modelInputShape.reduce((a, b) => a * b)),
           modelInputShape
         );
-        await yolov11.run({ images: tensor }); // Pastikan nama input layer 'images'
+        await yolov11.run({ images: tensor });
 
         setSession(yolov11);
         setLoading(null);
@@ -57,7 +53,6 @@ const App = () => {
     };
   }, []);
 
-  // Fungsi Deteksi Realtime Webcam
   const runWebcam = async () => {
     if (inputMode === 'webcam' && webcamRef.current && canvasRef.current && session) {
       if (webcamRef.current.readyState === 4) { // Video ready
@@ -75,11 +70,11 @@ const App = () => {
     }
   };
 
-  // Trigger loop webcam saat mode berubah
   useEffect(() => {
     if (inputMode === 'webcam') {
       runWebcam();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputMode, session]);
 
   return (
@@ -103,7 +98,7 @@ const App = () => {
               ref={imageRef}
               src={image || "#"}
               alt=""
-              crossOrigin="anonymous" // Wajib buat URL external
+              crossOrigin="anonymous" 
               style={{ display: image ? "block" : "none", maxWidth: "100%" }}
               onLoad={() => {
                 detectImage(

@@ -1,5 +1,5 @@
 {
-  "name": "yolov8-seg-onnxruntime-web",
+  "name": "seablocker-client",
   "homepage": "https://fastering18.github.io/seablocker-client/",
   "version": "0.1.0",
   "dependencies": {
@@ -33,16 +33,16 @@
     ]
   },
   "author": {
-    "name": "Wahyu Setianto",
-    "url": "https://github.com/Hyuto"
+    "name": "Fastering18",
+    "url": "https://github.com/Fastering18"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hyuto/yolov8-seg-onnxruntime-web.git"
+    "url": "git+https://github.com/Fastering18/seablocker-client.git"
   },
   "bugs": {
-    "url": "https://github.com/Hyuto/yolov8-seg-onnxruntime-web/issues"
+    "url": "https://github.com/Fastering18/seablocker-client/issues"
   },
   "devDependencies": {
     "@craco/craco": "^7.1.0",

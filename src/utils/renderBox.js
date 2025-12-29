@@ -18,8 +18,6 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
   ctx.textBaseline = "top";
 
   // --- PREPARE MASKS (YOLO Segmentation Logic) ---
-  // output1 shape is [1, 32, 160, 160]
-  // We need to matrix multiply: maskWeights [32] x Protos [32, 160, 160]
   
   if (masks_protos) {
     const proto_h = 160;
@@ -28,10 +26,8 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
     const proto_flat = masks_protos.data; // Float32Array
 
     boxes_data.forEach((box) => {
-      // 1. Create a 160x160 mask for this specific object
       const maskMat = new cv.Mat(proto_h, proto_w, cv.CV_32FC1);
       
-      // Perform manual Matrix Multiplication (JS is faster than looping OpenCV Mats for this specific shape)
       for (let y = 0; y < proto_h; y++) {
           for (let x = 0; x < proto_w; x++) {
               let sum = 0;
@@ -45,8 +41,6 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
           }
       }
 
-      // 2. Resize mask to Box Size (Optimization: Process only ROI)
-      // Map box coordinates from Canvas (e.g., 1920x1080) to Proto (160x160)
       const scaleX = proto_w / canvas.width;
       const scaleY = proto_h / canvas.height;
       
@@ -56,11 +50,9 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
       const mh = Math.min(proto_h - my, Math.ceil(box.h * scaleY));
 
       if (mw > 0 && mh > 0) {
-          // Crop the ROI from the 160x160 mask
           const roiRect = new cv.Rect(mx, my, mw, mh);
           const roiMat = maskMat.roi(roiRect);
           
-          // Resize ROI to actual Bounding Box size
           const resizedMask = new cv.Mat();
           cv.resize(roiMat, resizedMask, new cv.Size(box.w, box.h), 0, 0, cv.INTER_LINEAR);
           
@@ -69,12 +61,10 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
           cv.threshold(resizedMask, binaryMask, 0.5, 255, cv.THRESH_BINARY);
           binaryMask.convertTo(binaryMask, cv.CV_8UC1);
 
-          // 3. Find Contours (The Polygon!)
           const contours = new cv.MatVector();
           const hierarchy = new cv.Mat();
           cv.findContours(binaryMask, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-          // 4. Draw Contours on Canvas
           const colorHex = colors.get(box.classId);
           ctx.fillStyle = Colors.hexToRgba(colorHex, 0.4); // Semi-transparent fill
           ctx.strokeStyle = colorHex;
@@ -82,10 +72,9 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
 
           for (let i = 0; i < contours.size(); ++i) {
               const contour = contours.get(i);
-              const data = contour.data32S; // Array of [x, y, x, y...]
+              const data = contour.data32S; 
 
               ctx.beginPath();
-              // Offset by box position (since we processed relative to box)
               ctx.moveTo(data[0] + box.x, data[1] + box.y);
               for (let j = 2; j < data.length; j += 2) {
                   ctx.lineTo(data[j] + box.x, data[j + 1] + box.y);
@@ -95,7 +84,6 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
               ctx.stroke();
           }
 
-          // Cleanup memory per box
           roiMat.delete();
           resizedMask.delete();
           binaryMask.delete();
@@ -106,7 +94,6 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
     });
   }
 
-  // --- DRAW BOXES & TEXT (Layered on top of polygons) ---
   boxes_data.forEach((box) => {
     const klass = labels[box.classId];
     const score = (box.score * 100).toFixed(1);
@@ -127,7 +114,6 @@ export const renderBoxes = (canvas, boxes_data, labels, masks_protos) => {
   });
 };
 
-// Helper Colors class (put this at the bottom or import it)
 export class Colors {
   constructor() {
     this.palette = ["#FF3838", "#FF9D97", "#FF701F", "#FFB21D", "#CFD231", "#48F90A"];

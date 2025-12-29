@@ -34,13 +34,12 @@ export const detectImage = async (
   // Inference
   const config = { images: tensor };
   const { output0, output1 } = await session.run(config); 
-  // output1 contains the Mask Prototypes (32x160x160) which we NEED for polygons
 
   const boxes = [];
   
   // --- PARSING OUTPUT ---
   const numAnchors = output0.dims[2]; 
-  const numOut = output0.dims[1];     
+  // const numOut = output0.dims[1];     
   const numClasses = 3;               
   const data = output0.data;
 
@@ -76,7 +75,7 @@ export const detectImage = async (
             x: x, y: y, w: width, h: height,
             score: maxScore,
             classId: maxClass,
-            maskWeights: weights // These weights shape the polygon
+            maskWeights: weights 
         });
     }
   }
@@ -97,7 +96,6 @@ export const detectImage = async (
   if (result.length > 0) {
       console.log(`Terdeteksi: ${result.length} objek`);
       
-      // PASS 'output1' (Prototypes) HERE!
       renderBoxes(canvas, result, labels, output1); 
   }
 
