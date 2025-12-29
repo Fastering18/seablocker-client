@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import cv from "@techstark/opencv-js";
 import { Tensor, InferenceSession } from "onnxruntime-web";
 import Loader from "./components/loader";
-import { detectImage } from "./utils/detect"; 
+import { detectImage } from "./utils/detect";
 import "./style/App.css";
 
 const App = () => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState({ text: "Loading OpenCV.js", progress: null });
-  const [image, setImage] = useState(null); 
-  const [inputMode, setInputMode] = useState("upload"); 
+  const [image, setImage] = useState(null);
+  const [inputMode, setInputMode] = useState("upload");
 
   // Refs
   const imageRef = useRef(null);
@@ -32,7 +32,7 @@ const App = () => {
 
         const yolov11 = await InferenceSession.create(
           `${baseModelURL}/${modelName}`,
-          { executionProviders: ['wasm'] } 
+          { executionProviders: ['wasm'] }
         );
 
         setLoading({ text: "Warming up model...", progress: null });
@@ -79,7 +79,11 @@ const App = () => {
 
   return (
     <div className="App">
-      {loading && <Loader>{loading.text}</Loader>}
+      {loading && (
+        <Loader progress={loading.progress}>
+          {loading.text}
+        </Loader>
+      )}
 
       <div className="header">
         <h1>YOLO11 Segmentation - SeaBlocker</h1>
@@ -98,7 +102,7 @@ const App = () => {
               ref={imageRef}
               src={image || "#"}
               alt=""
-              crossOrigin="anonymous" 
+              crossOrigin="anonymous"
               style={{ display: image ? "block" : "none", maxWidth: "100%" }}
               onLoad={() => {
                 detectImage(
@@ -153,7 +157,7 @@ const App = () => {
           accept="image/*"
           onChange={(e) => {
             if (!e.target.files || e.target.files.length === 0) {
-              return; 
+              return;
             }
 
             if (image) {
