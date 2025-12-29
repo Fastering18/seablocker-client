@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/seablocker-client/static/css/main.81aaeba4.css",
-    "main.js": "/seablocker-client/static/js/main.162eaeed.js",
+    "main.css": "/seablocker-client/static/css/main.9826f348.css",
+    "main.js": "/seablocker-client/static/js/main.c9d6aa59.js",
     "static/js/ort-wasm-simd.wasm": "/seablocker-client/static/js/ort-wasm-simd.wasm",
     "static/js/ort-wasm-simd-threaded.wasm": "/seablocker-client/static/js/ort-wasm-simd-threaded.wasm",
     "static/js/ort-wasm.wasm": "/seablocker-client/static/js/ort-wasm.wasm",
     "static/js/ort-wasm-threaded.wasm": "/seablocker-client/static/js/ort-wasm-threaded.wasm",
     "index.html": "/seablocker-client/index.html",
-    "main.81aaeba4.css.map": "/seablocker-client/static/css/main.81aaeba4.css.map",
-    "main.162eaeed.js.map": "/seablocker-client/static/js/main.162eaeed.js.map"
+    "main.9826f348.css.map": "/seablocker-client/static/css/main.9826f348.css.map",
+    "main.c9d6aa59.js.map": "/seablocker-client/static/js/main.c9d6aa59.js.map"
   },
   "entrypoints": [
-    "static/css/main.81aaeba4.css",
-    "static/js/main.162eaeed.js"
+    "static/css/main.9826f348.css",
+    "static/js/main.c9d6aa59.js"
   ]
 }
